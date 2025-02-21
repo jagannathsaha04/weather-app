@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #E1CCFF;
+    background-color: #0E0F0B;
 }
 
 .card {
@@ -27,7 +27,7 @@ body {
         justify-content: center;
     }
 
-    .search input {
+    .search input { 
         border: 0;
         outline: 0;
         background: #ebfffc;
@@ -50,8 +50,8 @@ body {
     }
 
     .search button img {
-        height: 50px;
-        width: 50px;
+        height: 25px;
+        width: 25px;
         object-fit: contain;
     }
 
