@@ -21,7 +21,7 @@
             <img src="./icons/clear.png" class="weather-icon">
             <h1 class="temperature">23°C</h1>
             <h2 class="city">Kolkata</h2>
-            <h4 class="feels">Feels fun</h4>
+            <h4 class="feels">Feels like 23°C</h4>
             <div class="details">
                 <div class="col">
                     <img src="./icons/humidity.png">
@@ -41,9 +41,8 @@
         </div>
     </div>
 
+    <script src="config.js"></script>
     <script>
-
-        const apiKey = "e791c16e94d59c3f2f89d9938bb614e9";
         const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 
         const searchBox = document.querySelector(".search input");
@@ -51,16 +50,18 @@
         const weatherIcon = document.querySelector(".weather-icon");
 
         async function checkWeather(city) {
-            const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+            if (!API_KEY) {
+                console.error("API key is missing. Make sure config.js is loaded.");
+                return;
+            }
+
+            const response = await fetch(apiUrl + city + `&appid=${API_KEY}`);
 
             if (response.status == 404) {
                 document.querySelector(".error").style.display = "block";
                 document.querySelector(".weather").style.display = "none";
             } else {
-
-                var data = await response.json();
-
-                console.log(data);
+                const data = await response.json();
 
                 document.querySelector(".city").innerHTML = data.name;
                 document.querySelector(".temperature").innerHTML = Math.round(data.main.temp) + "°C";
@@ -68,41 +69,33 @@
                 document.querySelector(".wind").innerHTML = Math.round(data.wind.speed) + "km/h";
                 document.querySelector(".feels").innerHTML = "Feels like: " + Math.round(data.main.feels_like) + "°C";
 
-                if (data.weather[0].main == "Clouds") {
-                    weatherIcon.src = "./icons/clouds.png"
-                } else if (data.weather[0].main == "Rain") {
-                    weatherIcon.src = "./icons/rain.png"
-                } else if (data.weather[0].main == "Drizzle") {
-                    weatherIcon.src = "./icons/drizzle.png"
-                } else if (data.weather[0].main == "Thunderstorm") {
-                    weatherIcon.src = "icons/rain.png"
-                } else if (data.weather[0].main == "Snow") {
-                    weatherIcon.src = "icons/snow.png"
-                } else if (data.weather[0].main == "Clear") {
-                    weatherIcon.src = "icons/clear.png"
-                } else if (data.weather[0].main == "Atmosphere") {
-                    weatherIcon.src = "icons/mist.png"
-                }
+                // Update weather icon based on weather condition
+                const weatherMap = {
+                    "Clouds": "./icons/clouds.png",
+                    "Rain": "./icons/rain.png",
+                    "Drizzle": "./icons/drizzle.png",
+                    "Thunderstorm": "./icons/rain.png",
+                    "Snow": "./icons/snow.png",
+                    "Clear": "./icons/clear.png",
+                    "Atmosphere": "./icons/mist.png"
+                };
+
+                weatherIcon.src = weatherMap[data.weather[0].main] || "./icons/clear.png";
 
                 document.querySelector(".weather").style.display = "block";
                 document.querySelector(".error").style.display = "none";
-
-
             }
-
-
         }
 
         searchBtn.addEventListener("click", () => {
             checkWeather(searchBox.value);
-        })
+        });
 
         searchBox.addEventListener("keyup", function(event) {
             if (event.key === "Enter") {
                 checkWeather(searchBox.value);
             }
         });
-
     </script>
 </body>
 
